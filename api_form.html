@@ -1,0 +1,83 @@
+<script>
+
+    document.addEventListener('DOMContentLoaded', function(event) {
+        event.preventDefault();
+        var form_2 = document.querySelectorAll('#form_2')[0];
+        form_2.addEventListener('submit', autenticar);
+        console.log(form_2)
+    }, false);
+
+    function autenticar() {
+
+        //Dados autenticacao
+        var myHeadersAuth = new Headers();
+        myHeadersAuth.append("Content-Type", "application/json");
+
+        var rawAuth = JSON.stringify({
+            "subDominio": "subdominio",
+            "login": "user",
+            "senha": "password"
+        });
+
+        var requestOptionsAuth = {
+            method: 'POST',
+            headers: myHeadersAuth,
+            body: rawAuth,
+            redirect: 'follow'
+        };
+        //Fim autenticacao
+
+        fetch("https://svapp.smark.com.br:446/v1/AuthenticationMobile/SignIn", requestOptionsAuth)
+        .then((resp) => resp.json())
+        .then(data => {
+
+            var token = data.Token;
+
+            let myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+            myHeaders.append("Authorization", "basic " + token);
+
+            let cpfCnpj_2 = document.getElementById('form-field-cpfCnpj_2').value;
+
+            let nome_2 = document.getElementById('form-field-nome_2').value;
+
+            let email_2 = document.getElementById('form-field-email_2').value;
+
+            let telefone_2 = document.getElementById('form-field-telefone_2').value;
+
+            let estado_2 = document.getElementById('form-field-estado_2').value;
+
+            let cidade_2 = document.getElementById('form-field-cidade_2').value;
+
+            var raw = JSON.stringify({
+                "NomeConta": nome_2,
+                "NomeContato": nome_2,
+                "NomeCarteira": "Nome da Carteira",
+                "Email": email_2,
+                "Telefone": telefone_2,
+                "Celular": " ",
+                "Origem": "Origem do Lead",
+                "Comentarios": "Cidade: " + cidade_2 + "Estado: " + estado_2,
+                "TipoOportunidade": "Tipo de Oportunidade",
+                "cpfCnpj": cpfCnpj_2,
+                "TipoPessoa": 2,
+                "Sexo": 1,
+                "IdAcao": 1
+            });
+
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
+
+            fetch("https://svapp.smark.com.br:446/v2/IntegracaoSite/ContasV2/Add", requestOptions)
+            .then(response => response.text())
+            .then(result => console.log(result))
+            .catch(error => console.log('error', error));
+
+        });
+    }
+
+</script>
